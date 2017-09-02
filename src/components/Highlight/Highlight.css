@@ -1,0 +1,31 @@
+.post-body img {
+  display: none
+}
+
+.post-body:hover img {
+  display: block
+}
+
+.post-title .edit-title {
+  display: none
+}
+
+.post-title:hover .edit-title {
+  display: block
+}
+
+.heart:hover .heart-outline,
+.heart .heart-favorite {
+    display: none;
+}
+.heart:hover .heart-favorite {
+    display: inline;
+}
+
+/*.lock:hover .icon-unlock,
+.lock .icon-lock {
+    display: none;
+}
+.lock:hover .icon-lock {
+    display: inline;
+}*/

@@ -1,0 +1,132 @@
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,300);
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+.content {
+  margin: 5em auto;
+  max-width: 36em;
+  width: 50%;
+}
+.banner {
+  font-size: 30px;
+  position: relative;
+  z-index: 1;
+}
+.img-bg {
+  height: 100vh;
+  max-height: 900px;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.img-bg-content {
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  position: absolute;
+  right: 0;
+}
+.img-bg-content > .content {
+  background: rgba(0, 0, 0, .3);
+  color: #fff;
+  padding: 4rem;
+}
+.img-src {
+  background-position: left top;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.img-blurred {
+  opacity: 0.1;
+}
+.title {
+  font-family: "Open Sans", sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+  margin-top: 0;
+  text-shadow: 0 0 20px rgba(1, 1, 1, .2);
+}
+@media (min-width: 769px) {
+  .title {
+    font-size: 3.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .title {
+    font-size: 4.5rem;
+    line-height: 0.85;
+  }
+}
+.byline {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+.more {
+  color: rgba(255, 255, 255, 0.65);
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-top: 12px;
+}
+.more a {
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+}
+.more img {
+  border-radius: 100%;
+  display: inline-block;
+  height: 30px;
+  line-height: 30px;
+  margin-bottom: -10px;
+  margin-right: 8px;
+  opacity: 0.5;
+  width: 30px;
+}
+.more:hover img {
+  opacity: 1;
+}
+.post {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.01rem;
+  line-height: 1.5;
+}
+.pull-right {
+  float: right;
+  margin-left: 2em;
+}
+.pull-left {
+  float: left;
+  margin-right: 3em;
+}
+
+/** =====================
+ * Responsive
+ ========================*/
+/*@media only screen and (max-width: 766px) {
+	.banner {
+		width: 480px;
+	}
+
+	.banner .post {
+		width: 390px;
+	}
+
+}*/
