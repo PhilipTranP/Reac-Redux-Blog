@@ -28,7 +28,7 @@ $ npm start
 ```
 
 ```
-## In case you might want to see how the app looks and works before downloading:
-
+## In case you might want to see how the app looks and works before downloading: <br>
+[here](https://reactnd-blog.herokuapp.com).
 
 ## Enjoy and have fun with React Redux!
