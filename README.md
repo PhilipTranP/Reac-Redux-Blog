@@ -27,8 +27,9 @@ $ npm install
 $ npm start
 ```
 
-```
-## In case you might want to see how the app looks and works before downloading: <br>
-[here](https://reactnd-blog.herokuapp.com).
+
+## In case you might want to see how the app looks and works before downloading
+ [here is the link](https://reactnd-blog.herokuapp.com/) <br>
+```(https://reactnd-blog.herokuapp.com). <br>
 
 ## Enjoy and have fun with React Redux!
