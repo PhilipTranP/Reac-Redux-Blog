@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Highlight from '../Highlight/index.js'
 import AddPostModal from '../PopupModal/AddPostModal'
-
+import AlertContainer from 'react-alert'
+import { FaTrashO } from 'react-icons/lib/fa'
 import { getAllPosts } from '../../redux/Post/actions'
 
 class Home extends Component {
@@ -15,6 +16,7 @@ class Home extends Component {
     this.closeModal = this.closeModal.bind(this)
     this.renderAllPosts = this.renderAllPosts.bind(this)
     this.refreshHomePage = this.refreshHomePage.bind(this)
+    this.alertDeleted = this.alertDeleted.bind(this)
   }
 
   componentDidMount() {
@@ -34,14 +36,30 @@ class Home extends Component {
 
   renderAllPosts() {
     return this.props.posts.map((post, index) => (
-          <Highlight key={post.id + index} post={post} refreshHomePage={this.refreshHomePage} />
+          <Highlight key={post.id-index} post={post} refreshHomePage={this.refreshHomePage} alertDeleted={this.alertDeleted}/>
     ))
+  }
+
+  alertDeleted() {
+    this.msg.show('Its gone to the trash for good now. ', {
+      time: 5000,
+      type: 'success',
+      icon: <FaTrashO size="24" color="red" />
+    })
+  }
+
+  alertOptions = {
+    offset: 14,
+    position: 'top right',
+    theme: 'light',
+    time: 5000,
+    transition: 'scale'
   }
 
   render(){
     return(
          <div className="mw9 center bg-near-white">
-
+           <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
            <div className="ph2-ns mt1 flex flex-row flex-wrap justify-center">
              <section className="pa2 fl w-85 w-50-l">
                {this.renderAllPosts()}
@@ -70,10 +88,11 @@ function matchDispatchToProps(dispatch) {
   }, dispatch)
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, {match}) {
   const {hash} = state.router.location
   const { posts } = state
   return {
+    match,
     hash,
     posts
   }

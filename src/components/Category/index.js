@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import AlertContainer from 'react-alert'
+import { FaTrashO } from 'react-icons/lib/fa'
 import Highlight from '../Highlight/index.js'
 import AddPostModal from '../PopupModal/AddPostModal'
 
@@ -17,11 +19,11 @@ class Category extends Component {
     this.closeModal = this.closeModal.bind(this)
     this.renderCategoryPosts = this.renderCategoryPosts.bind(this)
     this.refreshCategoryPage = this.refreshCategoryPage.bind(this)
+    this.alertDeleted = this.alertDeleted.bind(this)
   }
 
   componentDidMount() {
-    const url = this.props.pathname
-    const category = url.substr(url.lastIndexOf('/') + 1)
+    const category = this.props.match.params.category
     this.props.getCategoryPosts(category)
   }
 
@@ -36,14 +38,28 @@ class Category extends Component {
   }
   renderCategoryPosts() {
     return this.props.posts.map((post, index) => (
-          <Highlight key={post.id + index} post={post} refreshCategoryPage={this.refreshCategoryPage} category={this.props.category}/>
+          <Highlight key={post.id + index} post={post} refreshCategoryPage={this.refreshCategoryPage} alertDeleted={this.alertDeleted}/>
     ))
   }
+  alertDeleted() {
+    this.msg.show('Its gone to the trash for good now. ', {
+      time: 5000,
+      type: 'success',
+      icon: <FaTrashO size="24" color="red" />
+    })
+  }
+
+  alertOptions = {
+    offset: 14,
+    position: 'top right',
+    theme: 'light',
+    time: 5000,
+    transition: 'scale'
+  }
   render(){
-    console.log(this.props.category)
     return(
          <div className="mw9 center bg-near-white">
-
+           <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
            <div className="ph2-ns mt1 flex flex-row flex-wrap justify-center">
              <section className="pa2 fl w-85 w-50-l">
                {this.renderCategoryPosts()}
@@ -72,11 +88,10 @@ function matchDispatchToProps(dispatch) {
   }, dispatch)
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const { category, posts } = state
-  const {pathname} = state.router.location
   return {
-    pathname,
+    ownProps,
     category,
     posts
   }

@@ -1,6 +1,6 @@
 const api = "https://bagle-react-server.herokuapp.com"
 
-let token = "3ddaff"
+let token = "3d378dffa"
 
 
 
@@ -70,6 +70,15 @@ export const editThePost = (id, body) =>
     'Content-Type': 'application/json'
   },
    body: JSON.stringify(body)
+ }).then(res => res.json())
+
+export const deleteThePost = (id) =>
+   fetch((`${api}/posts/${id}`), {
+     method: 'DELETE',
+     headers: {
+     ...headers,
+     'Content-Type': 'application/json'
+   }
  }).then(res => res.json())
 
 export const votePost = (id, body) =>

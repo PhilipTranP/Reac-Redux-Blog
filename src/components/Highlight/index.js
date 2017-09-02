@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { FaBeer, FaSmileO, FaHashtag, FaFlagO, FaFrownO } from 'react-icons/lib/fa'
+import { FaBeer, FaSmileO, FaHashtag, FaFlagO, FaFrownO, FaTrashO } from 'react-icons/lib/fa'
 import { MdFavoriteOutline, MdFavorite } from 'react-icons/lib/md'
 import EditModal from '../PopupModal/EditModal'
-import AlertContainer from 'react-alert'
 import _ from 'lodash'
 import './Highlight.css'
 import { getAllPosts, votePost, selectPost } from '../../redux/Post/actions'
@@ -29,18 +28,12 @@ class Highlight extends Component {
     this.setState({openModal: !this.state.openModal})
   }
 
-  alertOptions = {
-    offset: 14,
-    position: 'top right',
-    theme: 'light',
-    time: 5000,
-    transition: 'scale'
-  }
+
   render() {
     const {post} = this.props
     return (
-      <article className="mb3 ba b--black-10 bg-white tc pv2 flex flex-row flex-wrap items-center">
-          <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+      <div>
+       <article className="mb3 ba b--black-10 bg-white tc pv2 flex flex-row flex-wrap items-center">
           <div className="w-100 db flex flex-row flex-wrap items-top">
             <svg className="dib ml3 mb2" width={21} height={21} viewBox="0 0 21 21"><path d="M4.662 8.72l-1.23 1.23a1.753 1.753 0 0 0 .004 2.477l5.135 5.135c.7.693 1.8.688 2.48.005l1.23-1.23 5.35-5.346c.31-.31.54-.92.51-1.36l-.32-4.29c-.09-1.09-1.05-2.06-2.15-2.14l-4.3-.33c-.43-.03-1.05.2-1.36.51l-.79.8-2.27 2.28-2.28 2.27zm9.826-.98a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"fillRule="evenodd" /></svg>
             <Link to="/" className="underline-hover link f5 ph2 silver tl">Technology</Link>
@@ -103,9 +96,10 @@ class Highlight extends Component {
             </span>
           </div>
             <div>
-              <EditModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body} category={this.props.category} pathname={this.props.pathname} refreshHomePage={this.props.refreshHomePage} refreshCategoryPage={this.props.refreshCategoryPage}/>
+              <EditModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body}  refreshHomePage={this.props.refreshHomePage} refreshCategoryPage={this.props.refreshCategoryPage} alertDeleted={this.props.alertDeleted}/>
             </div>
       </article>
+     </div>
     )
   }
 }

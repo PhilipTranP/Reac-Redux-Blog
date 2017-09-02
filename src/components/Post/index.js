@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import './Post.css'
 import Comment from '../Comment'
@@ -17,6 +18,7 @@ class Post extends Component {
   }
   render() {
     const {selectedPost} = this.props
+    console.log(this.props.match.params)
     return(
       <div>
        <section className="banner">
@@ -55,10 +57,11 @@ function mapDispatchToProps(dispatch) {
     getPostComments
   }, dispatch)
 }
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const { selectedPost, postComments, posts } = state
   const { pathname } = state.router.location
   return {
+    // path: ownProps.route ? ownProps.route.path : "/",
     selectedPost,
     postComments,
     posts,
@@ -66,4 +69,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Post)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Post))

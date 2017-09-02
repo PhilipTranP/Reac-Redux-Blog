@@ -1,11 +1,12 @@
 import { GET_POST_COMMENTS, ADD_COMMENT, DELETE_COMMENT, UPVOTE_COMMENT, TOGGLE_EDIT_FORM, EDIT_COMMENT } from './actions'
-import _ from 'lodash'
+import sortBy from 'lodash.sortby'
+import uniqBy from 'lodash.uniqby'
 
 
 export default function(state = [], action) {
   switch(action.type) {
     case GET_POST_COMMENTS:
-      let allComments =  _.uniqBy(action.payload.concat(state), 'id').filter(comment =>
+      let allComments =  uniqBy(action.payload.concat(state), 'id').filter(comment =>
         comment.parentId === action.parentId)
       //assing isEditing = false for all comment
         let commentWithAddedisEditing = allComments.map(comment => {
@@ -13,10 +14,10 @@ export default function(state = [], action) {
           AddedisEditing.isEditing = false
           return AddedisEditing
         })
-      return _.sortBy(commentWithAddedisEditing.filter(comment => comment.deleted === false), 'timestamp')
+      return sortBy(commentWithAddedisEditing.filter(comment => comment.deleted === false), 'timestamp')
 
     case ADD_COMMENT:
-      return _.reverse(state.concat(action.payload))
+      return state.concat(action.payload).reverse()
 
     case DELETE_COMMENT:
       let newStateAfterDeleted = state.map(function(comment) {

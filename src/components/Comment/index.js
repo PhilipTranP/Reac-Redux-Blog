@@ -107,6 +107,7 @@ class Comment extends Component {
   }
 
   render() {
+    console.log(this.props.postId)
     const renderCommentList = this.props.comments.map(comment => {
       return(
             <li key={comment.id}>
@@ -159,53 +160,19 @@ class Comment extends Component {
                       </div>
                     :
                        <div className="comment-content">
-                             <textarea autoFocus id="comment" name="comment" className="mt1 pa1 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" defaultValue={comment.body}  onChange={this.onEditCommentChange}></textarea>
-                             <div className="mt3" onClick={(event)=>this.handleEditComment(event, comment.id, comment.body, this.state.commentBody)}><input className="link green b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Submit" /></div>
-                        </div>
 
+                             <textarea autoFocus id="comment" name="comment" className="mt1 pa1 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" defaultValue={comment.body}  onChange={this.onEditCommentChange}></textarea>
+
+                             <div className="mt3" onClick={(event)=>this.handleEditComment(event, comment.id, comment.body, this.state.commentBody)}><input className="link green b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Update" /></div>
+
+                        </div>
                   }
+
                 </div>
               </div>
 
              {/* TODO: Reply to a comment */}
-              <ul className="comments-list reply-list">
-                <li>
-                  {/* Avatar */}
-                  <div className="comment-avatar" style={{backgroundColor: '#777'}}><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""/></div>
 
-                  <div className="comment-box">
-                    <div className="comment-head">
-                      <h6 className="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>
-                      <span>hace 10 minutos</span>
-                        <img className="pull-right" src="http://iconshow.me/media/images/ui/ios7-icons/png/512/heart-outline.png" width="20px" alt=""/>
-                        <img className="pull-right" src="https://d30y9cdsu7xlg0.cloudfront.net/png/390622-200.png" width="20px" alt=""/>
-                      <i className="fa fa-reply" />
-                      <i className="fa fa-heart" />
-                    </div>
-                    <div className="comment-content">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  {/* Avatar */}
-                  <div className="comment-avatar"><img src="/icon.png" alt=""/></div>
-
-                  <div className="comment-box">
-                    <div className="comment-head">
-                      <h6 className="comment-name by-author"><a href="http://creaticode.com/blog">{_.startCase(comment.author)}</a></h6>
-                      <span>hace 10 minutos</span>
-                        <img className="pull-right" src="http://iconshow.me/media/images/ui/ios7-icons/png/512/heart-outline.png" width="20px" alt=""/>
-                        <img className="pull-right" src="https://d30y9cdsu7xlg0.cloudfront.net/png/390622-200.png" width="20px" alt=""/>
-                      <i className="fa fa-reply" />
-                      <i className="fa fa-heart" />
-                    </div>
-                    <div className="comment-content">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?
-                    </div>
-                  </div>
-                </li>
-              </ul>
             </li>
       )
     })
@@ -221,9 +188,9 @@ class Comment extends Component {
             {this.state.showCommentForm
               ?
                 <div>
-                  <article class="pa4 black-80">
-                      <form action="sign-up_submit" method="get" accept-charset="utf-8">
-                          <div class="mt3">
+                  <article className="pa4 black-80">
+                      <form action="sign-up_submit" method="get" acceptCharset="utf-8">
+                          <div className="mt3">
                             <input autoFocus className="pa2 input-reset ba bg--transparent w-100 measure" type="email" name="email-address"  id="email-address" placeholder="Your name" value={this.state.name} onChange={this.handleNameChange}/>
                           </div>
                           <div>
@@ -255,7 +222,8 @@ function mapDispatchToProps(dispatch) {
     getPostComments
   }, dispatch)
 }
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
+  postId: ownProps.postId,
   pathname: state.router.location.pathname
 })
 

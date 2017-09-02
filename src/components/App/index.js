@@ -57,9 +57,9 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Home}/>
               )}/>
-            <Route exact path={`/:${this.props.category}`} component={Category}/>
+            <Route exact path={`/:category`} component={Category}/>
                 )}/>
-              <Route exact path={`/:${this.props.category}/:id`} component={Post}/>
+              <Route exact path={`/:category/:id`} component={Post}/>
                 )}/>
             <Route path={`/posts/:id`} component={Post}/>
           </Switch>
@@ -69,7 +69,7 @@ class App extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const {category, categories, posts, postComments} = state
   const {hash} = state.router.location
   return {

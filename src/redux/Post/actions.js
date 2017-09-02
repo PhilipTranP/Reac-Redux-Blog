@@ -6,6 +6,7 @@ export const SELECT_POST = 'SELECT_POST'
 export const ADD_POST = 'ADD_POST'
 export const EDIT_POST = 'EDIT_POST'
 export const VOTE_POST = 'VOTE_POST'
+export const DELETE_POST = 'DELETE_POST'
 
 
 export function getAllPosts() {
@@ -73,6 +74,17 @@ export function votePost(id, body) {
         type: VOTE_POST,
         post,
         id
+      })
+    })
+  }
+}
+
+export function deletePost(id) {
+  return dispatch => {
+    ReadableAPI.deleteThePost(id).then(data => {
+      dispatch({
+        type : DELETE_POST,
+        payload: data
       })
     })
   }
