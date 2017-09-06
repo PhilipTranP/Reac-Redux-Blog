@@ -7,10 +7,12 @@ import stringCategory from './Category/selectReducer'
 //POST
 import arrayPosts from './Post/reducer'
 import objectPost from './Post/selectReducer'
-// import allPostReducer from './Post/allPostReducer'
-// import categoryPostReducer from './Post/categoryPostReducer'
 
+//COMMENT
 import arrayComments from './Comment/reducer'
+
+//ALERT
+import alertData from './Alert/reducer'
 
 const rootReducer = combineReducers({
   //Categegory Data
@@ -23,6 +25,9 @@ const rootReducer = combineReducers({
 
   //Comment Data
   postComments: arrayComments, //TODO: commentComments
+
+  //Alert Data
+  alertData,
 })
 
 export default rootReducer

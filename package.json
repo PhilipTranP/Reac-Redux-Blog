@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "connected-react-router": "^4.2.3",
+    "feather-icons": "^3.2.2",
     "history": "^4.7.2",
     "lodash": "^4.17.4",
     "lodash.sortby": "^4.7.0",
@@ -16,7 +17,9 @@
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-alert": "^2.2.0",
+    "react-bootstrap": "^0.31.2",
     "react-dom": "^15.6.1",
+    "react-feather": "^1.0.7",
     "react-icons": "^2.2.5",
     "react-modal": "^2.2.4",
     "react-redux": "^5.0.6",

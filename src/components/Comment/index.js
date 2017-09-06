@@ -7,6 +7,8 @@ import { MdFavoriteOutline, MdFavorite } from 'react-icons/lib/md'
 import "./Comment.css"
 import AlertContainer from 'react-alert'
 import { addComment, removeComment, upVoteComment, toggleEditForm, editComment,  getPostComments } from '../../redux/Comment/actions'
+import { startAlert } from '../../redux/Alert/actions'
+import { thumbUpIcon, heartIcon, trashIcon } from '../../constants.js'
 
 let upVotedList = []
 // let addedCommentList =[] //use to only allow owner to delete comment
@@ -57,6 +59,7 @@ class Comment extends Component {
     "parentDeleted": false,
     }
     this.props.addComment(comment)
+    this.props.startAlert("Thanks for your comment", thumbUpIcon, 'green')
     this.setState({showCommentForm: !this.state.showCommentForm, name: '', body:''})
   }
 
@@ -95,19 +98,14 @@ class Comment extends Component {
     }
     this.props.editComment(id, body)
     this.props.toggleEditForm(id)
+    this.props.startAlert("Nice update!", thumbUpIcon, 'green')
   }
 
-
-  alertOptions = { // Alert when vote more than one time per comment
-    offset: 14,
-    position: 'top right',
-    theme: 'light',
-    time: 5000,
-    transition: 'scale'
-  }
 
   render() {
-    console.log(this.props.postId)
+    const arrayMesage = ['Glad you like it', 'Thanks for showing your love', 'Wow, thats great!', 'Great! I will write more like this.']
+    const message = arrayMesage[Math.floor(Math.random() * arrayMesage.length)]
+
     const renderCommentList = this.props.comments.map(comment => {
       return(
             <li key={comment.id}>
@@ -123,12 +121,15 @@ class Comment extends Component {
                     <a className="link pointer"   onClick={(event)=>this.handleUpvoteComment(event, comment)}>
                       <div className="mb1 mr2 heart pull-right">
                         <div className="silver heart-outline"><MdFavoriteOutline size="22"/></div>
-                        <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); }}><MdFavorite size="22" color="red"/></div>
+                        <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.startAlert(message, heartIcon, 'red')
+                        }}><MdFavorite size="22" color="red"/></div>
                       </div>
                      </a>
 
                     <div className="pull-right" style={{marginRight: "-20px", marginTop: "2px"}}>{comment.voteScore}</div>
-                    <img className="pull-right" src="https://d30y9cdsu7xlg0.cloudfront.net/png/390622-200.png" width="20px" alt=""/><span></span>
+                   {/* Reply Comment Button.
+
+                     <img className="pull-right" src="https://d30y9cdsu7xlg0.cloudfront.net/png/390622-200.png" width="20px" alt=""/>*/}
                     <i className="fa fa-reply" />
                     <i className="fa fa-heart" />
                   </div>
@@ -149,7 +150,7 @@ class Comment extends Component {
                       <div><div className="pt2 comment-content"></div>
                         <div style={{height: '5px'}}></div>
                           {/* TODO: Only the creator of the comment can delete it!  */}
-                          <span className="pull-right link pointer" style={{marginRight: '10px'}}><a onClick={(e) => {e.preventDefault(); this.props.removeComment(comment.id);
+                          <span className="pull-right link pointer" style={{marginRight: '10px'}}><a onClick={(e) => {e.preventDefault(); this.props.removeComment(comment.id);  this.props.startAlert("The comment is gone now", trashIcon, 'red');
                           this.props.getPostComments(comment.parentId)}}><img src="https://maxcdn.icons8.com/Share/icon/Editing//delete1600.png" width="20px" height="20px" alt=""/></a></span>
 
 
@@ -219,7 +220,8 @@ function mapDispatchToProps(dispatch) {
     upVoteComment,
     toggleEditForm,
     editComment,
-    getPostComments
+    getPostComments,
+    startAlert,
   }, dispatch)
 }
 const mapStateToProps = (state, ownProps) => ({

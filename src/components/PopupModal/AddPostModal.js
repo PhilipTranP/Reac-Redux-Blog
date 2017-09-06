@@ -9,6 +9,9 @@ import './AddPostModal.css'
 
 import { getAllCategories } from '../../redux/Category/actions'
 import { addPost } from '../../redux/Post/actions'
+import { startAlert } from '../../redux/Alert/actions'
+import { thumbUpIcon } from '../../constants'
+
 
 
 class PopupModal extends Component {
@@ -57,6 +60,7 @@ class PopupModal extends Component {
      "deleted": false
    }
    this.props.addPost(post)
+   this.props.startAlert("Awesome! I will let everyone know", thumbUpIcon, 'green')
    this.setState({author: '', title: '', body: '', option: ''})
    this.props.closeModal()
   }
@@ -84,7 +88,7 @@ class PopupModal extends Component {
                               this.setState({option: e.target.value})}}>
                               <option disabled defaultValue>Select one</option>
                               { this.props.categories.map(cat =>
-                                <option value={cat.title}>{cat.title.toUpperCase()}</option>)
+                                <option key={ Math.random().toString(36).substr(-8)} value={cat.title} >{cat.title.toUpperCase()}</option>)
                               }
                             </select></span>
                      </div>
@@ -129,7 +133,8 @@ function mapStateToProps(state) {
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
     getAllCategories,
-    addPost
+    addPost,
+    startAlert
   }, dispatch)
 }
 

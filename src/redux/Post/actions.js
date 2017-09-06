@@ -7,6 +7,7 @@ export const ADD_POST = 'ADD_POST'
 export const EDIT_POST = 'EDIT_POST'
 export const VOTE_POST = 'VOTE_POST'
 export const DELETE_POST = 'DELETE_POST'
+export const REFRESH_CATEGORY_PAGE = 'REFRESH_CATEGORY_PAGE'
 
 
 export function getAllPosts() {
@@ -67,6 +68,7 @@ export function editPost(id, body) {
   }
 }
 
+
 export function votePost(id, body) {
   return dispatch => {
     ReadableAPI.votePost(id, body).then(post => {
@@ -84,7 +86,21 @@ export function deletePost(id) {
     ReadableAPI.deleteThePost(id).then(data => {
       dispatch({
         type : DELETE_POST,
-        payload: data
+        payload: data,
+        id
+      })
+    })
+  }
+}
+
+export function refreshCatPage(cat, id) {
+  return dispatch => {
+    ReadableAPI.fetchPosts(cat).then(posts => {
+      dispatch({
+        type: REFRESH_CATEGORY_PAGE,
+        payload: posts,
+        cat,
+        id
       })
     })
   }

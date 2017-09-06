@@ -1,4 +1,4 @@
-import { GET_ALL_POSTS, GET_CATEGORY_POSTS, ADD_POST, EDIT_POST, VOTE_POST, DELETE_POST } from './actions'
+import { GET_ALL_POSTS, GET_CATEGORY_POSTS, ADD_POST, EDIT_POST, VOTE_POST, DELETE_POST, REFRESH_CATEGORY_PAGE } from './actions'
 
 import sortBy from 'lodash.sortby'
 import uniqBy from 'lodash.uniqby'
@@ -34,7 +34,11 @@ export default function(state = [], action) {
       const newVotedState = state.filter(post => post.id !== action.id)
       return sortBy(newVotedState.concat(action.post), 'voteScore').reverse()
     case DELETE_POST:
-      return state.filter(post => post.deleted !== true)
+      const filteredDeletedPost = state.filter(post => post !== action.id)
+      return uniqBy(filteredDeletedPost.concat(action.data), 'id')
+    case REFRESH_CATEGORY_PAGE:
+      const refreshedCategoryPageAfterDeletedOnly = action.payload.concat(state).filter(post => post.id !== action.id)
+      return uniqBy(refreshedCategoryPageAfterDeletedOnly, 'id')
     default:
       return state
   }

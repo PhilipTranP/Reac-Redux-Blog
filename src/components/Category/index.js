@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import AlertContainer from 'react-alert'
-import { FaTrashO } from 'react-icons/lib/fa'
+import { withRouter } from 'react-router-dom'
 import Highlight from '../Highlight/index.js'
 import AddPostModal from '../PopupModal/AddPostModal'
 
@@ -19,10 +18,15 @@ class Category extends Component {
     this.closeModal = this.closeModal.bind(this)
     this.renderCategoryPosts = this.renderCategoryPosts.bind(this)
     this.refreshCategoryPage = this.refreshCategoryPage.bind(this)
-    this.alertDeleted = this.alertDeleted.bind(this)
   }
 
   componentDidMount() {
+    const category = this.props.match.params.category
+    this.props.getCategoryPosts(category)
+
+  }
+
+  refreshCategoryPage() {
     const category = this.props.match.params.category
     this.props.getCategoryPosts(category)
   }
@@ -33,33 +37,17 @@ class Category extends Component {
   closeModal() {
     this.setState({openModal: false})
   }
-  refreshCategoryPage(cat) {
-    this.props.getCategoryPosts(cat)
-  }
+
   renderCategoryPosts() {
     return this.props.posts.map((post, index) => (
-          <Highlight key={post.id + index} post={post} refreshCategoryPage={this.refreshCategoryPage} alertDeleted={this.alertDeleted}/>
+          <Highlight key={ Math.random().toString(36).substr(-8)} post={post} catId={post.id} catTitle={post.title} catBody={post.body} refreshCategoryPage={this.props.refreshCategoryPage} categoryFromUrl={this.props.match.params.category}/>
     ))
   }
-  alertDeleted() {
-    this.msg.show('Its gone to the trash for good now. ', {
-      time: 5000,
-      type: 'success',
-      icon: <FaTrashO size="24" color="red" />
-    })
-  }
 
-  alertOptions = {
-    offset: 14,
-    position: 'top right',
-    theme: 'light',
-    time: 5000,
-    transition: 'scale'
-  }
   render(){
+
     return(
          <div className="mw9 center bg-near-white">
-           <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
            <div className="ph2-ns mt1 flex flex-row flex-wrap justify-center">
              <section className="pa2 fl w-85 w-50-l">
                {this.renderCategoryPosts()}
@@ -97,4 +85,4 @@ function mapStateToProps(state, ownProps) {
   }
 }
 
-export default connect(mapStateToProps, matchDispatchToProps)(Category)
+export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Category))

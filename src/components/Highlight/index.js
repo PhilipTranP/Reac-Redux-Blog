@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { FaBeer, FaSmileO, FaHashtag, FaFlagO, FaFrownO, FaTrashO } from 'react-icons/lib/fa'
+import { FaSmileO, FaHashtag, FaFlagO, FaFrownO} from 'react-icons/lib/fa'
 import { MdFavoriteOutline, MdFavorite } from 'react-icons/lib/md'
 import EditModal from '../PopupModal/EditModal'
 import _ from 'lodash'
 import './Highlight.css'
 import { getAllPosts, votePost, selectPost } from '../../redux/Post/actions'
+import { startAlert } from '../../redux/Alert/actions'
+import { heartIcon, eyeIcon, alertTriangleIcon } from '../../constants'
 
 
 class Highlight extends Component {
@@ -31,6 +33,8 @@ class Highlight extends Component {
 
   render() {
     const {post} = this.props
+    const arrayMesage = ['Glad you like it', 'Thanks for showing your love', 'Wow, thats great!', 'Great! I will write more like this.']
+    const message = arrayMesage[Math.floor(Math.random() * arrayMesage.length)]
     return (
       <div>
        <article className="mb3 ba b--black-10 bg-white tc pv2 flex flex-row flex-wrap items-center">
@@ -64,7 +68,7 @@ class Highlight extends Component {
             <span className="silver flex flex-row flex-wrap items-center"><button className="outline-0 button-reset input-reset bg-transparent bn pointer ma0">
             <div className="mb1 mr2 heart">
               <div className="silver heart-outline"><MdFavoriteOutline size="22"/></div>
-              <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.votePost(post.id, {option: "upVote"}); this.setState({responses: this.state.responses + 1}) }}><MdFavorite size="22" color="red"/></div>
+              <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.votePost(post.id, {option: "upVote"}); this.setState({responses: this.state.responses + 1}); this.props.startAlert(message, heartIcon, 'red') }}><MdFavorite size="22" color="red"/></div>
             </div>
           </button>{post.voteScore}</span>
         <span className=" pointer silver flex flex-row flex-wrap items-center"><a className="link dim f5 silver">{this.state.responses} Responses</a> <button className="outline-0 button-reset input-reset bg-transparent bn pointer ma0"><svg width={25} height={25} viewBox="0 0 25 25"><path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z"fillRule="evenodd" /></svg></button><span style={{marginRight: "20px", marginTop: "-20px"}}>
@@ -74,21 +78,13 @@ class Highlight extends Component {
                   <div className="child absolute link green pt2" style={{backgroundColor: '#FFF', marginLeft: "-132px", paddingLeft: "0px", textAlign: "right", width: "168px"}}>
                     <div style={{paddingRight: "20px"}}>
                       <div className="pb2 pointer" onClick={(e) => {e.preventDefault(); this.props.votePost(post.id, {option: "upVote"});
-                        this.msg.show('`cause you like it, I will write it more', {
-                        time: 5000,
-                        type: 'success',
-                        icon: <MdFavorite size="24" color="red" />
-                    }); this.setState({responses: this.state.responses + 1}) }}> Upvote <FaSmileO color="gold"/></div>
-                      <div className="pb2 pointer" onClick={(e) => {e.preventDefault(); this.props.votePost(post.id, {option: "downVote"});
-                        this.msg.show('Lets have a beer. Maybe you will change your mind!', {
-                          time: 5000,
-                          type: 'success',
-                          icon: <FaBeer size="24" color="gold" />
-                       }); this.setState({responses: this.state.responses + 1}) }}> Imsad <FaFrownO color="#544444"/></div>
+                        this.props.startAlert(message, heartIcon, 'red'); this.setState({responses: this.state.responses + 1}) }}> Upvote <FaSmileO color="gold"/></div>
+                      <div className="pb2 pointer" onClick={(e) => {e.preventDefault(); this.props.votePost(post.id, {option: "downVote"}); this.props.startAlert("Thanks! We'll keep an eye on it", eyeIcon, 'black');
+                       this.setState({responses: this.state.responses + 1}) }}> Imsad <FaFrownO color="#544444"/></div>
                       <div className="pb2 pointer" onClick={(e) => {
-                        e.preventDefault(); this.setState({responses: this.state.responses + 1}); this.msg.show('Seems like we do need a flag here!')} }> Flag <FaFlagO  size={15} color="red"/></div>
+                        e.preventDefault(); this.props.startAlert("We are working on the Flag feature", alertTriangleIcon, 'gold'); this.setState({responses: this.state.responses + 1}) } }> Flag <FaFlagO  size={15} color="red"/></div>
                       <div className="pb2 pointer" onClick={(e) => {
-                        e.preventDefault(); this.setState({responses: this.state.responses + 1}); this.msg.show('Tagging/Bookmarking is on the way...')} }> Tag <FaHashtag size={13} color="#0084b4"/></div>
+                        e.preventDefault(); this.props.startAlert("We are also working on the Tag feature", alertTriangleIcon, 'gold'); this.setState({responses: this.state.responses + 1}) } }> Tag <FaHashtag size={13} color="#0084b4"/></div>
                     </div>
                   </div>
 
@@ -96,7 +92,11 @@ class Highlight extends Component {
             </span>
           </div>
             <div>
-              <EditModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body}  refreshHomePage={this.props.refreshHomePage} refreshCategoryPage={this.props.refreshCategoryPage} alertDeleted={this.props.alertDeleted}/>
+              <EditModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body}
+              catId={this.props.catId} catTitle={this.props.catTitle} catBody={this.props.catBody}
+              refreshHomePage={this.props.refreshHomePage}
+              refreshCategoryPage={this.props.refreshCategoryPage}
+              categoryFromUrl={this.props.categoryFromUrl} />
             </div>
       </article>
      </div>
@@ -117,7 +117,8 @@ function matchDispatchToProps(dispatch) {
   return bindActionCreators({
     selectPost,
     getAllPosts,
-    votePost
+    votePost,
+    startAlert
   }, dispatch)
 }
 

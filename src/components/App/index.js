@@ -13,12 +13,13 @@ import { getPostComments, removeComment, addComment } from '../../redux/Comment/
 import { getCategoryPosts, getAllPosts, addPost } from '../../redux/Post/actions'
 
 
-import Home from '../../components/Home'
-import Category from '../../components/Category'
-import Header from '../../components/Header'
-import Navigation from '../../components/Header/Navigation'
+import Home from '../Home'
+import Category from '../Category'
+import Header from '../Header'
+import Navigation from '../Header/Navigation'
+import Alerts from '../Alert'
 
-import Post from '../../components/Post'
+import Post from '../Post'
 
 
 class App extends Component {
@@ -26,6 +27,7 @@ class App extends Component {
   componentDidMount(){
     this.props.getAllCategories()
   }
+
 
   renderCategoryLink() {
     return this.props.categories.map(cat => (
@@ -45,39 +47,43 @@ class App extends Component {
     )
   }
 
+
   render() {
-    if(!this.props.categories || !this.props.posts)return(<div>loading...</div>)
     const { history } = this.props
 
     return (
       <ConnectedRouter history={history}>
+
         <div className="App">
+          <Alerts />
           <Header />
           <Navigation homeLink={this.renderHomeLink()} categoryLink={this.renderCategoryLink()}/>
           <Switch>
             <Route exact path='/' component={Home}/>
               )}/>
-            <Route exact path={`/:category`} component={Category}/>
-                )}/>
-              <Route exact path={`/:category/:id`} component={Post}/>
-                )}/>
+            <Route exact path={`/:category`} component={Category} />
+
+            <Route exact path={`/:category/:id`} component={Post}/>
+
             <Route path={`/posts/:id`} component={Post}/>
           </Switch>
-        </div>
+       </div>
       </ConnectedRouter>
     );
   }
 }
 
 function mapStateToProps(state, ownProps) {
-  const {category, categories, posts, postComments} = state
+  const {category, categories, posts, postComments, alertData, message } = state
   const {hash} = state.router.location
   return {
     hash,
     category,
     categories,
     posts,
-    postComments
+    postComments,
+    alertData,
+    message
   }
 }
 
