@@ -1,66 +1,54 @@
 import React, { Component } from 'react'
-import _ from 'lodash'
-import moment from 'moment'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { MdFavoriteOutline, MdFavorite } from 'react-icons/lib/md'
-import "./Comment.css"
-import AlertContainer from 'react-alert'
+import startCase from 'lodash.startcase'
+import moment from 'moment'
 import { addComment, removeComment, upVoteComment, toggleEditForm, editComment,  getPostComments } from '../../redux/Comment/actions'
+import { commentNameChange, commentBodyChange, resetCommentForm, showCommentForm } from '../../redux/Comment/actions'
+import "./Comment.css"
+//Testing feature showing two alerts
 import { startAlert } from '../../redux/Alert/actions'
-import { thumbUpIcon, heartIcon, trashIcon } from '../../constants.js'
+import AlertContainer from 'react-alert'
+
+//Testing dif types of icons
+import { FaThumbsOUp, FaThumbsODown } from 'react-icons/lib/fa'
+import { thumbUpIcon, heartIcon, trashIcon, alertTriangleIcon } from '../../constants.js'
+import { Trash2, Edit3 } from 'react-feather'
 
 let upVotedList = []
+let downVotedList = []
 // let addedCommentList =[] //use to only allow owner to delete comment
 
 class Comment extends Component {
   constructor(props){
     super(props)
-    this.state={
-      showCommentForm: false,
-      postId: '',
-      name: '',
-      body: '',
-      commentBody:''
-    }
-    this.handleCommentClick = this.handleCommentClick.bind(this)
     this.handleAddComment = this.handleAddComment.bind(this)
-    this.handleNameChange = this.handleNameChange.bind(this)
-    this.handleBodyChange = this.handleBodyChange.bind(this)
     this.handleUpvoteComment = this.handleUpvoteComment.bind(this)
-    // this.handleRemoveComment = this.handleRemoveComment.bind(this)
+    this.handleDownVoteComment = this.handleDownVoteComment.bind(this)
     this.handleEditComment = this.handleEditComment.bind(this)
-    this.onEditCommentChange = this.onEditCommentChange.bind(this)
   }
 
-  handleCommentClick(e){ //show hide add comment form
-    e.preventDefault()
-    this.setState({showCommentForm: !this.state.showCommentForm})
-  }
-  handleNameChange(e){
-    this.setState({name: e.target.value})
-  }
-  handleBodyChange(e){
-    this.setState({body: e.target.value})
-  }
-  onEditCommentChange(e){
-    this.setState({commentBody: e.target.value})
-  }
   handleAddComment(e){
     e.preventDefault()
     const comment = {
     "id": Math.random().toString(36).substr(-8),
     "parentId": this.props.postId,
     "timestamp": Date.now(),
-    "body": this.state.body,
-    "author": this.state.name,
+    "body": this.props.formData.body,
+    "author": this.props.formData.name,
     "voteScore": 1,
     "deleted": false,
     "parentDeleted": false,
     }
-    this.props.addComment(comment)
-    this.props.startAlert("Thanks for your comment", thumbUpIcon, 'green')
-    this.setState({showCommentForm: !this.state.showCommentForm, name: '', body:''})
+    if(this.props.formData.name === "" || this.props.formData.body ===""){
+      this.props.startAlert("All fields are required", alertTriangleIcon, 'red')
+      this.props.showCommentForm(true)
+    } else {
+      this.props.addComment(comment)
+      this.props.startAlert("Thanks for your comment", thumbUpIcon, 'green')
+      this.props.resetCommentForm()
+      this.props.showCommentForm(false)
+    }
   }
 
   handleUpvoteComment(event, comment){
@@ -84,22 +72,43 @@ class Comment extends Component {
     }
   }
 
+  handleDownVoteComment(event, comment){
+    event.preventDefault()
+    const body = {
+    "id": comment.id,
+    "parentId": comment.parentId,
+    "timestamp": comment.timestamp,
+    "body": comment.body,
+    "author": comment.author,
+    "voteScore": comment.voteScore - 1,
+    "deleted": false,
+    "parentDeleted": false
+
+    }
+    if(downVotedList.indexOf(comment.id) === -1){
+      this.props.upVoteComment(comment.id, body)
+      downVotedList = upVotedList.concat(comment.id)
+    } else {
+      this.msg.show('You already downvoted this comment!')
+    }
+  }
+
   handleEditComment(e, id, oldValue, newValue) {
     e.preventDefault()
-    let bodyContent
-    if(!newValue && newValue ==='') { //if hit submit without modify value
-      bodyContent = oldValue
+    if(newValue ==='' || oldValue === newValue.trim()) { //if hit submit without   //modify value
+      this.props.startAlert("Please change something or cancel edit form", alertTriangleIcon, 'red')
     }else{
-      bodyContent = newValue
+      const body = {
+        timestamp: Date.now(),
+        body: newValue
+      }
+      this.props.editComment(id, body)
+      this.props.resetCommentForm()
+      this.props.toggleEditForm(id)
+      this.props.startAlert("Nice update!", thumbUpIcon, 'green')
     }
-    const body = {
-      timestamp: Date.now(),
-      body: bodyContent
-    }
-    this.props.editComment(id, body)
-    this.props.toggleEditForm(id)
-    this.props.startAlert("Nice update!", thumbUpIcon, 'green')
   }
+
 
 
   render() {
@@ -115,18 +124,26 @@ class Comment extends Component {
                 {/* Contenedor del Comentario */}
                 <div className="comment-box">
                   <div className="comment-head">
-                    <h6 className="comment-name by-author"><a href="http://creaticode.com/blog">{_.startCase(comment.author)}</a></h6>
+                    <h6 className="comment-name by-author"><a href="http://creaticode.com/blog">{startCase(comment.author)}</a></h6>
                     <span>{moment(comment.timestamp).fromNow()}</span>
                     {/*heart icon for upvote comment */}
-                    <a className="link pointer"   onClick={(event)=>this.handleUpvoteComment(event, comment)}>
-                      <div className="mb1 mr2 heart pull-right">
-                        <div className="silver heart-outline"><MdFavoriteOutline size="22"/></div>
-                        <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.startAlert(message, heartIcon, 'red')
-                        }}><MdFavorite size="22" color="red"/></div>
+                    <a className="link pointer"   onClick={(event)=>this.handleDownVoteComment(event, comment)}>
+                      <div className="mb1 heart pull-right">
+                        <div className="silver heart-outline"><FaThumbsODown size="22"/></div>
+                        <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.startAlert("Thanks for letting us know", alertTriangleIcon, 'gold')
+                        }}><FaThumbsODown size="22" color="red"/></div>
                       </div>
                      </a>
 
-                    <div className="pull-right" style={{marginRight: "-20px", marginTop: "2px"}}>{comment.voteScore}</div>
+                     <a className="link pointer"   onClick={(event)=>this.handleUpvoteComment(event, comment)}>
+                       <div className="mb1 heart pull-right">
+                         <div className="silver heart-outline"><FaThumbsOUp size="22"/></div>
+                         <div className="heart-favorite link pointer" onClick={(e) => {e.preventDefault(); this.props.startAlert(message, heartIcon, 'red')
+                         }}><FaThumbsOUp size="22" color="green"/></div>
+                       </div>
+                      </a>
+
+                    <div className="silver pull-right" style={{marginRight: "0px", marginTop: "5px"}}>vote score {' '} <strong>{comment.voteScore}</strong></div>
                    {/* Reply Comment Button.
 
                      <img className="pull-right" src="https://d30y9cdsu7xlg0.cloudfront.net/png/390622-200.png" width="20px" alt=""/>*/}
@@ -150,21 +167,23 @@ class Comment extends Component {
                       <div><div className="pt2 comment-content"></div>
                         <div style={{height: '5px'}}></div>
                           {/* TODO: Only the creator of the comment can delete it!  */}
-                          <span className="pull-right link pointer" style={{marginRight: '10px'}}><a onClick={(e) => {e.preventDefault(); this.props.removeComment(comment.id);  this.props.startAlert("The comment is gone now", trashIcon, 'red');
-                          this.props.getPostComments(comment.parentId)}}><img src="https://maxcdn.icons8.com/Share/icon/Editing//delete1600.png" width="20px" height="20px" alt=""/></a></span>
+                          <span className="pull-right link pointer silver" style={{marginRight: '10px'}}><a onClick={(e) => {e.preventDefault(); this.props.removeComment(comment.id);  this.props.startAlert("The comment is gone now", trashIcon, 'red');
+                          this.props.getPostComments(comment.parentId)}}>
+                          <Trash2 size="18" color="grey"/>
+                          </a></span>
 
 
                          {/*Toggle the comment edit form*/}
-                         <span className="pull-right link pointer" style={{marginRight: '10px'}}><a onClick={(event) => { event.preventDefault(); this.props.toggleEditForm(comment.id)} }>
+                         <span className="pull-right link pointer silver" style={{marginRight: '10px'}}><a onClick={(event) => { event.preventDefault(); this.props.toggleEditForm(comment.id)} }>
                            <div style={{height: '2px'}}></div>
-                           <img src="https://cdn3.iconfinder.com/data/icons/social-productivity-line-art-5/128/history-edit-512.png" width="17px" height="17px" alt=""/></a></span>
+                           <Edit3 size="18" color="grey"/></a></span>
                       </div>
                     :
                        <div className="comment-content">
 
-                             <textarea autoFocus id="comment" name="comment" className="mt1 pa1 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" defaultValue={comment.body}  onChange={this.onEditCommentChange}></textarea>
+                             <textarea autoFocus id="comment" name="comment" className="mt1 pa1 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" defaultValue={comment.body}  onChange={(e)=>{this.props.commentBodyChange(e.target.value)}}></textarea>
 
-                             <div className="mt3" onClick={(event)=>this.handleEditComment(event, comment.id, comment.body, this.state.commentBody)}><input className="link green b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Update" /></div>
+                             <div className="mt3" onClick={(event)=>this.handleEditComment(event, comment.id, comment.body, this.props.formData.body)}><input className="link green b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Update" /></div>
 
                         </div>
                   }
@@ -180,24 +199,28 @@ class Comment extends Component {
     return (
         <div className="comments-container">
             <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
-            <h1 style={{marginLeft: '-30px'}}>{this.props.comments.length} Comments <span onClick={this.handleCommentClick}><a><span className="mr2 link pointer"><img src="http://cdn.onlinewebfonts.com/svg/img_168491.svg" width="20px" alt=""/>
+            <h1 style={{marginLeft: '-30px'}}>{this.props.comments.length} Comments <span onClick={(e) => {this.props.showCommentForm(true)}}><a><span className="mr2 link pointer"><img src="http://cdn.onlinewebfonts.com/svg/img_168491.svg" width="20px" alt=""/>
             </span><span className="link green">Add Comment </span></a></span>
 
           <span className="pull-right"><a className="ml2 pt3 link green">Read Commenting Guidelines</a></span>
 
             </h1>
-            {this.state.showCommentForm
+            {this.props.formData.formOpen === true
               ?
                 <div>
                   <article className="pa4 black-80">
                       <form action="sign-up_submit" method="get" acceptCharset="utf-8">
                           <div className="mt3">
-                            <input autoFocus className="pa2 input-reset ba bg--transparent w-100 measure" type="email" name="email-address"  id="email-address" placeholder="Your name" value={this.state.name} onChange={this.handleNameChange}/>
+                            <input autoFocus className="pa2 input-reset ba bg--transparent w-100 measure" type="email" name="email-address"  id="email-address" placeholder="Your name" value={this.props.formData.name} onChange={(e) => {e.preventDefault(); this.props.commentNameChange(e.target.value)}} />
+
                           </div>
                           <div>
-                            <textarea id="comment" name="comment" className="mt3 pa2 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                            <textarea id="comment" name="comment" className="mt3 pa2 input-reset ba bg--transparent w-100 measure" aria-describedby="comment-desc" placeholder="Comment" value={this.props.formData.body} onChange={(e) => {e.preventDefault(); this.props.commentBodyChange(e.target.value) }}></textarea>
                           </div>
-                        <div className="mt3" onClick={this.handleAddComment}><input className="link green b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Submit" /></div>
+                          <div className="flex items-center justify-center pa4">
+                            <div  onClick={()=> {this.props.showCommentForm(false); this.props.resetCommentForm()}}><input className="f5 no-underline grey bg-animate hover-bg-black hover-white inline-flex items-center pa3 ba border-box mr4" type="submit" value="Cancel" /></div>
+                            <div onClick={this.handleAddComment}><input className="f5 no-underline green bg-animate hover-bg-black hover-white inline-flex items-center pa3 ba border-box mr4" type="submit" value="Submit" /></div>
+                          </div>
                       </form>
                    </article>
                 </div>
@@ -222,11 +245,18 @@ function mapDispatchToProps(dispatch) {
     editComment,
     getPostComments,
     startAlert,
+    commentNameChange,
+    commentBodyChange,
+    resetCommentForm,
+    showCommentForm
   }, dispatch)
 }
-const mapStateToProps = (state, ownProps) => ({
-  postId: ownProps.postId,
-  pathname: state.router.location.pathname
-})
+function mapStateToProps (state, ownProps){
+  const { formData } = state
+  return {
+    postId: ownProps.postId,
+    formData
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment)

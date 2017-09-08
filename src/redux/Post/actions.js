@@ -9,6 +9,14 @@ export const VOTE_POST = 'VOTE_POST'
 export const DELETE_POST = 'DELETE_POST'
 export const REFRESH_CATEGORY_PAGE = 'REFRESH_CATEGORY_PAGE'
 
+//Post forms
+
+export const POST_AUTHOR_CHANGE = 'POST_AUTHOR_CHANGE'
+export const POST_TITLE_CHANGE = 'POST_TITLE_CHANGE'
+export const POST_BODY_CHANGE = 'POST_BODY_CHANGE'
+export const POST_OPTION_CHANGE = 'POST_OPTION_CHANGE'
+export const RESET_POST_FORM = 'RESET_POST_FORM'
+
 
 export function getAllPosts() {
   return dispatch => {
@@ -103,5 +111,39 @@ export function refreshCatPage(cat, id) {
         id
       })
     })
+  }
+}
+
+export function postAuthorChange(authorValue) {
+  return {
+    type: POST_AUTHOR_CHANGE,
+    payload: authorValue
+  }
+}
+
+export function postTitleChange(titleValue) {
+  return {
+    type: POST_TITLE_CHANGE,
+    payload: titleValue
+  }
+}
+
+export function postBodyChange(bodyValue) {
+  return {
+    type: POST_BODY_CHANGE,
+    payload: bodyValue
+  }
+}
+
+export function postOptionChange(optionValue) {
+  return {
+    type: POST_OPTION_CHANGE,
+    payload: optionValue
+  }
+}
+
+export function resetPostForm() {
+  return {
+    type: RESET_POST_FORM,
   }
 }

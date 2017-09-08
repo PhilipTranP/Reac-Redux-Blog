@@ -4,14 +4,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { FaSmileO, FaHashtag, FaFlagO, FaFrownO} from 'react-icons/lib/fa'
 import { MdFavoriteOutline, MdFavorite } from 'react-icons/lib/md'
-import EditModal from '../PopupModal/EditModal'
+import EditPostModal from '../PopupModal/EditPostModal'
 import _ from 'lodash'
 import './Highlight.css'
 import { getAllPosts, votePost, selectPost } from '../../redux/Post/actions'
 import { startAlert } from '../../redux/Alert/actions'
 import { heartIcon, eyeIcon, alertTriangleIcon } from '../../constants'
 
-
+let clickCount = 0
 class Highlight extends Component {
   constructor(props) {
     super(props)
@@ -84,7 +84,8 @@ class Highlight extends Component {
                       <div className="pb2 pointer" onClick={(e) => {
                         e.preventDefault(); this.props.startAlert("We are working on the Flag feature", alertTriangleIcon, 'gold'); this.setState({responses: this.state.responses + 1}) } }> Flag <FaFlagO  size={15} color="red"/></div>
                       <div className="pb2 pointer" onClick={(e) => {
-                        e.preventDefault(); this.props.startAlert("We are also working on the Tag feature", alertTriangleIcon, 'gold'); this.setState({responses: this.state.responses + 1}) } }> Tag <FaHashtag size={13} color="#0084b4"/></div>
+                        e.preventDefault(); this.props.startAlert("We are also working on the Tag feature", alertTriangleIcon, 'gold');
+                        this.setState({responses: this.state.responses + 1}) } }> Tag <FaHashtag size={13} color="#0084b4"/></div>
                     </div>
                   </div>
 
@@ -92,7 +93,7 @@ class Highlight extends Component {
             </span>
           </div>
             <div>
-              <EditModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body}
+              <EditPostModal openModal={this.state.openModal} closeModal={this.closeModal} postId={post.id} title={post.title} body={post.body}
               catId={this.props.catId} catTitle={this.props.catTitle} catBody={this.props.catBody}
               refreshHomePage={this.props.refreshHomePage}
               refreshCategoryPage={this.props.refreshCategoryPage}

@@ -1,11 +1,11 @@
 const api = "https://bagle-react-server.herokuapp.com"
 
-let token = "3djghjg552fafajda"
+let token
 
+// = "3djghjg552fafajda"
 
-
-// if (!token)
-//   token = localStorage.token = Math.random().toString(36).substr(-8)
+if (!token)
+  token = localStorage.token = Math.random().toString(36).substr(-8)
 
 const headers = {
   'Accept': 'application/json',

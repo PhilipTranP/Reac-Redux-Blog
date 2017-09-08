@@ -6,6 +6,10 @@ export const DELETE_COMMENT = 'DELETE_COMMENT'
 export const UPVOTE_COMMENT = 'UPVOTE_COMMENT'
 export const TOGGLE_EDIT_FORM = 'TOGGLE_EDIT_FORM'
 export const EDIT_COMMENT = 'EDIT_COMMENT'
+export const COMMENT_NAME_CHANGE = 'COMMENT_NAME_CHANGE'
+export const COMMENT_BODY_CHANGE = 'COMMENT_BODY_CHANGE'
+export const RESET_COMMENT_FORM = 'RESET_COMMENT_FORM'
+export const SHOW_COMMENT_FORM = 'SHOW_COMMENT_FORM'
 
 
 export function getPostComments(postId) {
@@ -70,5 +74,31 @@ export function editComment(id, body) {
         id
       })
     })
+  }
+}
+
+export function commentNameChange(nameValue) {
+  return {
+    type: COMMENT_NAME_CHANGE,
+    payload: nameValue
+  }
+}
+
+export function commentBodyChange(bodyValue) {
+  return {
+    type: COMMENT_BODY_CHANGE,
+    payload: bodyValue
+  }
+}
+
+export function resetCommentForm() {
+  return {
+    type: RESET_COMMENT_FORM
+  }
+}
+export function showCommentForm(bool) {
+  return {
+    type: SHOW_COMMENT_FORM,
+    payload: bool
   }
 }
